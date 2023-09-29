@@ -199,7 +199,7 @@ export async function handleRecaptchaFlow<TRequest, TResponse>(
     return actionMethod(authInstance, request).catch(async error => {
       if (error.code === `auth/${AuthErrorCode.MISSING_RECAPTCHA_TOKEN}`) {
         console.log(
-          `${actionName} is protected by reCAPTCHA for this project. Automatically triggering the reCAPTCHA flow and restarting the flow.`
+          `${actionName} is protected by reCAPTCHA Enterprise for this project. Automatically triggering the reCAPTCHA flow and restarting the flow.`
         );
         const requestWithRecaptcha = await injectRecaptchaFields(
           authInstance,
