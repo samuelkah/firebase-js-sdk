@@ -102,7 +102,7 @@ export async function sendSignInLinkToEmail(
     }
   }
   setActionCodeSettings(request, actionCodeSettings);
-  void handleRecaptchaFlow(
+  await handleRecaptchaFlow(
     authInternal,
     request,
     RecaptchaActionName.GET_OOB_CODE,

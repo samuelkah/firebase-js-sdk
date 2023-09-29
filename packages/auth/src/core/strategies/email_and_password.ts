@@ -106,7 +106,7 @@ export async function sendPasswordResetEmail(
   if (actionCodeSettings) {
     _setActionCodeSettingsOnRequest(authInternal, request, actionCodeSettings);
   }
-  void handleRecaptchaFlow(
+  await handleRecaptchaFlow(
     authInternal,
     request,
     RecaptchaActionName.GET_OOB_CODE,
