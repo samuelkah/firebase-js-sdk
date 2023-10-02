@@ -125,78 +125,78 @@ describe('platform_browser/recaptcha/recaptcha_enterprise_verifier', () => {
     });
   });
 
-context('handleRecaptchaFlow', () => {
-  let mockAuthInstance: AuthInternal;
-  let mockRequest: any;
-  let mockActionMethod: sinon.SinonStub;
+  context('handleRecaptchaFlow', () => {
+    let mockAuthInstance: AuthInternal;
+    let mockRequest: any;
+    let mockActionMethod: sinon.SinonStub;
 
-  beforeEach(async () => {
-    mockAuthInstance = await testAuth();
-    mockRequest = {};
-    mockActionMethod = sinon.stub();
-  });
-
-  afterEach(() => {
-    sinon.restore();
-  });
-
-  it('should handle recaptcha when emailPasswordEnabled is true', async () => {
-    sinon.stub(mockAuthInstance, '_getRecaptchaConfig').returns({
-      emailPasswordEnabled: true,
-      siteKey: "mock_site_key"
+    beforeEach(async () => {
+      mockAuthInstance = await testAuth();
+      mockRequest = {};
+      mockActionMethod = sinon.stub();
     });
-    mockActionMethod.resolves('success');
 
-    const result = await handleRecaptchaFlow(
-      mockAuthInstance,
-      mockRequest,
-      RecaptchaActionName.GET_OOB_CODE,
-      mockActionMethod
-    );
-
-    expect(result).to.equal('success');
-    expect(mockActionMethod).to.have.been.calledOnce;
-    // Add more assertions as needed, e.g., checking if injectRecaptchaFields was called
-  });
-
-  it('should handle action without recaptcha when emailPasswordEnabled is false and no error', async () => {
-    sinon.stub(mockAuthInstance, '_getRecaptchaConfig').returns({
-      emailPasswordEnabled: false,
-      siteKey: 'mock_site_key'
+    afterEach(() => {
+      sinon.restore();
     });
-    mockActionMethod.resolves('success');
 
-    const result = await handleRecaptchaFlow(
-      mockAuthInstance,
-      mockRequest,
-      RecaptchaActionName.GET_OOB_CODE,
-      mockActionMethod
-    );
+    it('should handle recaptcha when emailPasswordEnabled is true', async () => {
+      sinon.stub(mockAuthInstance, '_getRecaptchaConfig').returns({
+        emailPasswordEnabled: true,
+        siteKey: 'mock_site_key'
+      });
+      mockActionMethod.resolves('success');
 
-    expect(result).to.equal('success');
-    expect(mockActionMethod).to.have.been.calledOnce;
-  });
+      const result = await handleRecaptchaFlow(
+        mockAuthInstance,
+        mockRequest,
+        RecaptchaActionName.GET_OOB_CODE,
+        mockActionMethod
+      );
 
-  it('should handle MISSING_RECAPTCHA_TOKEN error when emailPasswordEnabled is false', async () => {
-    sinon.stub(mockAuthInstance, '_getRecaptchaConfig').returns({
-      emailPasswordEnabled: false,
-      siteKey: 'mock_site_key'
+      expect(result).to.equal('success');
+      expect(mockActionMethod).to.have.been.calledOnce;
+      // Add more assertions as needed, e.g., checking if injectRecaptchaFields was called
     });
-    mockActionMethod.onFirstCall().rejects({
-      code: 'auth/MISSING_RECAPTCHA_TOKEN'
+
+    it('should handle action without recaptcha when emailPasswordEnabled is false and no error', async () => {
+      sinon.stub(mockAuthInstance, '_getRecaptchaConfig').returns({
+        emailPasswordEnabled: false,
+        siteKey: 'mock_site_key'
+      });
+      mockActionMethod.resolves('success');
+
+      const result = await handleRecaptchaFlow(
+        mockAuthInstance,
+        mockRequest,
+        RecaptchaActionName.GET_OOB_CODE,
+        mockActionMethod
+      );
+
+      expect(result).to.equal('success');
+      expect(mockActionMethod).to.have.been.calledOnce;
     });
-    mockActionMethod.onSecondCall().resolves('success-after-recaptcha');
 
-    const result = await handleRecaptchaFlow(
-      mockAuthInstance,
-      mockRequest,
-      RecaptchaActionName.GET_OOB_CODE,
-      mockActionMethod
-    );
+    it('should handle MISSING_RECAPTCHA_TOKEN error when emailPasswordEnabled is false', async () => {
+      sinon.stub(mockAuthInstance, '_getRecaptchaConfig').returns({
+        emailPasswordEnabled: false,
+        siteKey: 'mock_site_key'
+      });
+      mockActionMethod.onFirstCall().rejects({
+        code: 'auth/MISSING_RECAPTCHA_TOKEN'
+      });
+      mockActionMethod.onSecondCall().resolves('success-after-recaptcha');
 
-    expect(result).to.equal('success-after-recaptcha');
-    expect(mockActionMethod).to.have.been.calledTwice;
-    // Add more assertions as needed, e.g., checking if injectRecaptchaFields was called
+      const result = await handleRecaptchaFlow(
+        mockAuthInstance,
+        mockRequest,
+        RecaptchaActionName.GET_OOB_CODE,
+        mockActionMethod
+      );
+
+      expect(result).to.equal('success-after-recaptcha');
+      expect(mockActionMethod).to.have.been.calledTwice;
+      // Add more assertions as needed, e.g., checking if injectRecaptchaFields was called
+    });
   });
-});
 });
