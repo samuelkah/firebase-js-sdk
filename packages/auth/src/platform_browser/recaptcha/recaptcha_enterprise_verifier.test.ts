@@ -141,6 +141,9 @@ describe('platform_browser/recaptcha/recaptcha_enterprise_verifier', () => {
     });
 
     it('should handle recaptcha when emailPasswordEnabled is true', async () => {
+      if (typeof window === 'undefined') {
+        return;
+      }
       sinon.stub(mockAuthInstance, '_getRecaptchaConfig').returns({
         emailPasswordEnabled: true,
         siteKey: 'mock_site_key'
@@ -156,10 +159,12 @@ describe('platform_browser/recaptcha/recaptcha_enterprise_verifier', () => {
 
       expect(result).to.equal('success');
       expect(mockActionMethod).to.have.been.calledOnce;
-      // Add more assertions as needed, e.g., checking if injectRecaptchaFields was called
     });
 
     it('should handle action without recaptcha when emailPasswordEnabled is false and no error', async () => {
+      if (typeof window === 'undefined') {
+        return;
+      }
       sinon.stub(mockAuthInstance, '_getRecaptchaConfig').returns({
         emailPasswordEnabled: false,
         siteKey: 'mock_site_key'
@@ -178,6 +183,9 @@ describe('platform_browser/recaptcha/recaptcha_enterprise_verifier', () => {
     });
 
     it('should handle MISSING_RECAPTCHA_TOKEN error when emailPasswordEnabled is false', async () => {
+      if (typeof window === 'undefined') {
+        return;
+      }
       sinon.stub(mockAuthInstance, '_getRecaptchaConfig').returns({
         emailPasswordEnabled: false,
         siteKey: 'mock_site_key'
@@ -196,7 +204,6 @@ describe('platform_browser/recaptcha/recaptcha_enterprise_verifier', () => {
 
       expect(result).to.equal('success-after-recaptcha');
       expect(mockActionMethod).to.have.been.calledTwice;
-      // Add more assertions as needed, e.g., checking if injectRecaptchaFields was called
     });
   });
 });
