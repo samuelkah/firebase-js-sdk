@@ -298,8 +298,30 @@ export function createUserWithEmailAndPassword(auth: Auth, email: string, passwo
 // @public
 export type CustomParameters = Record<string, string>;
 
+// Warning: (ae-forgotten-export) The symbol "StartPasskeyEnrollmentResponse" needs to be exported by the entry point index.d.ts
+//
+// @public (undocumented)
+export function debugCreateCredential(name: string, debugStartPasskeyEnrollmentResponse: StartPasskeyEnrollmentResponse): Promise<PublicKeyCredential>;
+
 // @public
 export const debugErrorMap: AuthErrorMap;
+
+// Warning: (ae-forgotten-export) The symbol "FinalizePasskeyEnrollmentRequest" needs to be exported by the entry point index.d.ts
+// Warning: (ae-forgotten-export) The symbol "FinalizePasskeyEnrollmentResponse" needs to be exported by the entry point index.d.ts
+//
+// @public (undocumented)
+export function debugGetFinalizePasskeyEnrollmentResponse(user: User, request: FinalizePasskeyEnrollmentRequest): Promise<FinalizePasskeyEnrollmentResponse>;
+
+// Warning: (ae-forgotten-export) The symbol "StartPasskeyEnrollmentRequest" needs to be exported by the entry point index.d.ts
+//
+// @public (undocumented)
+export function debugGetStartPasskeyEnrollmentResponse(user: User, request: StartPasskeyEnrollmentRequest): Promise<StartPasskeyEnrollmentResponse>;
+
+// @public (undocumented)
+export function debugPrepareFinalizePasskeyEnrollmentRequest(user: User, credential: PublicKeyCredential): Promise<FinalizePasskeyEnrollmentRequest>;
+
+// @public (undocumented)
+export function debugPrepareStartPasskeyEnrollmentRequest(user: User): Promise<StartPasskeyEnrollmentRequest>;
 
 // @public
 export function deleteUser(user: User): Promise<void>;

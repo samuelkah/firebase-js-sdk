@@ -75,7 +75,12 @@ import {
   initializeRecaptchaConfig,
   validatePassword,
   signInWithPasskey,
-  enrollPasskey
+  enrollPasskey,
+  debugCreateCredential,
+  debugPrepareStartPasskeyEnrollmentRequest,
+  debugGetStartPasskeyEnrollmentResponse,
+  debugPrepareFinalizePasskeyEnrollmentRequest,
+  debugGetFinalizePasskeyEnrollmentResponse,
 } from '@firebase/auth';
 
 import { config } from './config';
@@ -531,6 +536,172 @@ function onSignInWithPasskey() {
 
 function onEnrollPasskey() {
   enrollPasskey(activeUser()).then(onAuthUserCredentialSuccess, onAuthError);
+}
+
+    function arrayBufferToBase64(buffer) {
+      let binary = '';
+      const bytes = new Uint8Array(buffer);
+      const len = bytes.byteLength;
+      for (let i = 0; i < len; i++) {
+        binary += String.fromCharCode(bytes[i]);
+      }
+      return window.btoa(binary);
+    }
+
+function publicKeyCredentialToJSON(pubKeyCred) {
+  if (pubKeyCred instanceof PublicKeyCredential) {
+    const serializedCredential = {
+      id: pubKeyCred.id,
+      type: pubKeyCred.type,
+      rawId: arrayBufferToBase64(pubKeyCred.rawId),
+      response: {
+        clientDataJSON: arrayBufferToBase64(pubKeyCred.response.clientDataJSON)
+        // Add other fields as necessary, converting ArrayBuffer fields to Base64
+      }
+    };
+
+    // Handle AttestationResponse if it exists
+    if (pubKeyCred.response instanceof AuthenticatorAttestationResponse) {
+      serializedCredential.response.attestationObject = arrayBufferToBase64(
+        pubKeyCred.response.attestationObject
+      );
+    }
+
+    // Handle AuthenticatorAssertionResponse if it exists
+    if (pubKeyCred.response instanceof AuthenticatorAssertionResponse) {
+      serializedCredential.response.authenticatorData = arrayBufferToBase64(
+        pubKeyCred.response.authenticatorData
+      );
+      serializedCredential.response.signature = arrayBufferToBase64(
+        pubKeyCred.response.signature
+      );
+      serializedCredential.response.userHandle = pubKeyCred.response.userHandle
+        ? arrayBufferToBase64(pubKeyCred.response.userHandle)
+        : null;
+    }
+
+    return JSON.stringify(serializedCredential);
+  }
+  throw new Error('Input was not a PublicKeyCredential object');
+}
+
+  function base64ToArrayBuffer(base64) {
+    const binaryString = window.atob(base64);
+    const len = binaryString.length;
+    const bytes = new Uint8Array(len);
+    for (let i = 0; i < len; i++) {
+      bytes[i] = binaryString.charCodeAt(i);
+    }
+    return bytes.buffer;
+  }
+
+function JSONtoPublicKeyCredential(jsonString) {
+
+  const serializedCredential = JSON.parse(jsonString);
+
+  const pubKeyCred = {
+    id: serializedCredential.id,
+    type: serializedCredential.type,
+    rawId: base64ToArrayBuffer(serializedCredential.rawId),
+    response: {
+      clientDataJSON: base64ToArrayBuffer(
+        serializedCredential.response.clientDataJSON
+      )
+      // Add other fields as necessary, converting Base64 fields back to ArrayBuffer
+    }
+  };
+
+  // Handle AttestationResponse if it exists
+  if (serializedCredential.response.attestationObject) {
+    pubKeyCred.response.attestationObject = base64ToArrayBuffer(
+      serializedCredential.response.attestationObject
+    );
+  }
+
+  // Handle AuthenticatorAssertionResponse if it exists
+  if (serializedCredential.response.authenticatorData) {
+    pubKeyCred.response.authenticatorData = base64ToArrayBuffer(
+      serializedCredential.response.authenticatorData
+    );
+    pubKeyCred.response.signature = base64ToArrayBuffer(
+      serializedCredential.response.signature
+    );
+    pubKeyCred.response.userHandle = serializedCredential.response.userHandle
+      ? base64ToArrayBuffer(serializedCredential.response.userHandle)
+      : null;
+  }
+
+  // Convert ArrayBuffer fields to Base64 for display purposes
+  pubKeyCred.rawId = arrayBufferToBase64(pubKeyCred.rawId);
+  pubKeyCred.response.clientDataJSON = arrayBufferToBase64(
+    pubKeyCred.response.clientDataJSON
+  );
+  if (pubKeyCred.response.attestationObject) {
+    pubKeyCred.response.attestationObject = arrayBufferToBase64(
+      pubKeyCred.response.attestationObject
+    );
+  }
+  if (pubKeyCred.response.authenticatorData) {
+    pubKeyCred.response.authenticatorData = arrayBufferToBase64(
+      pubKeyCred.response.authenticatorData
+    );
+    pubKeyCred.response.signature = arrayBufferToBase64(
+      pubKeyCred.response.signature
+    );
+    if (pubKeyCred.response.userHandle) {
+      pubKeyCred.response.userHandle = arrayBufferToBase64(
+        pubKeyCred.response.userHandle
+      );
+    }
+  }
+
+  return pubKeyCred;
+}
+
+async function onCreateCredential() {
+  const name = $('#name').val();
+  const response = JSON.parse($('#start-enroll-response').val());
+  console.log(response)
+  const credential = await debugCreateCredential(name, response);
+  const cred_str = publicKeyCredentialToJSON(credential);
+  $('#credential').val(cred_str);
+}
+
+async function onGetCredential() {
+  const name = $('#name').val();
+}
+
+async function onPrepareStartEnrollRequest() {
+  const request = await debugPrepareStartPasskeyEnrollmentRequest(activeUser());
+  $('#start-enroll-request').val(JSON.stringify(request));
+}
+
+async function onGetStartEnrollResponse() {
+  const request = JSON.parse($('#start-enroll-request').val());
+  const response = await debugGetStartPasskeyEnrollmentResponse(
+    activeUser(),
+    request
+  );
+  $('#start-enroll-response').val(JSON.stringify(response));
+}
+
+async function onPrepareFinalizeEnrollRequest() {
+  const cred_str = $('#credential').val();
+  const credential = JSONtoPublicKeyCredential(cred_str);
+  const request = await debugPrepareFinalizePasskeyEnrollmentRequest(
+    activeUser(),
+    credential
+  );
+  $('#finalize-enroll-request').val(JSON.stringify(request));
+}
+
+async function onGetFinalizeEnrollResponse() {
+  const request = JSON.parse($('#finalize-enroll-request').val());
+  const response = await debugGetFinalizePasskeyEnrollmentResponse(
+    activeUser(),
+    request
+  );
+  $('#finalize-enroll-response').val(JSON.stringify(response));
 }
 
 /**
@@ -2268,6 +2439,15 @@ function initApp() {
   $('#send-password-reset-email').click(onSendPasswordResetEmail);
   $('#verify-password-reset-code').click(onVerifyPasswordResetCode);
   $('#confirm-password-reset').click(onConfirmPasswordReset);
+
+  // Debug
+  $('#create-credential').click(onCreateCredential);
+  $('#get-credential').click(onGetCredential);
+
+  $('#prepare-start-enroll-request').click(onPrepareStartEnrollRequest);
+  $('#get-start-enroll-response').click(onGetStartEnrollResponse);
+  $('#prepare-finalize-enroll-request').click(onPrepareFinalizeEnrollRequest);
+  $('#get-finalize-enroll-response').click(onGetFinalizeEnrollResponse);
 
   $('#get-provider-data').click(onGetProviderData);
   $('#enroll-passkey').click(onEnrollPasskey);

@@ -295,6 +295,14 @@ export {
   verifyBeforeUpdateEmail
 } from './strategies/email';
 export { signInWithPasskey, enrollPasskey } from './strategies/passkey';
+export {
+  debugCreateCredential,
+  // debugGetCredential,
+  debugPrepareStartPasskeyEnrollmentRequest,
+  debugGetStartPasskeyEnrollmentResponse,
+  debugPrepareFinalizePasskeyEnrollmentRequest,
+  debugGetFinalizePasskeyEnrollmentResponse
+} from './strategies/passkey';
 
 // core
 export { ActionCodeURL, parseActionCodeURL } from './action_code_url';

@@ -21,7 +21,7 @@ import {
   Endpoint,
   HttpMethod,
   _addTidIfNecessary,
-  _performSignInRequest
+  _performApiRequest
 } from '../index';
 import { IdTokenResponse } from '../../model/id_token';
 
@@ -71,7 +71,7 @@ export async function startPasskeyEnrollment(
   auth: Auth,
   request: StartPasskeyEnrollmentRequest
 ): Promise<StartPasskeyEnrollmentResponse> {
-  return _performSignInRequest<
+  return _performApiRequest<
     StartPasskeyEnrollmentRequest,
     StartPasskeyEnrollmentResponse
   >(
@@ -85,7 +85,7 @@ export async function startPasskeyEnrollment(
 export interface FinalizePasskeyEnrollmentRequest {
   idToken?: string;
   tenantId?: string;
-  authenticatorRegistrationResponse?: AuthenticatorRegistrationResponse;
+  registrationResponse?: PublicKeyCredential;
 }
 
 export interface FinalizePasskeyEnrollmentResponse extends IdTokenResponse {
@@ -98,7 +98,7 @@ export async function finalizePasskeyEnrollment(
   auth: Auth,
   request: FinalizePasskeyEnrollmentRequest
 ): Promise<FinalizePasskeyEnrollmentResponse> {
-  return _performSignInRequest<
+  return _performApiRequest<
     FinalizePasskeyEnrollmentRequest,
     FinalizePasskeyEnrollmentResponse
   >(
@@ -123,7 +123,7 @@ export async function startPasskeySignin(
   auth: Auth,
   request: StartPasskeySigninRequest
 ): Promise<StartPasskeySigninResponse> {
-  return _performSignInRequest<
+  return _performApiRequest<
     StartPasskeySigninRequest,
     StartPasskeySigninResponse
   >(
@@ -149,7 +149,7 @@ export async function finalizePasskeySignin(
   auth: Auth,
   request: FinalizePasskeySigninRequest
 ): Promise<FinalizePasskeySigninResponse> {
-  return _performSignInRequest<
+  return _performApiRequest<
     FinalizePasskeySigninRequest,
     FinalizePasskeySigninResponse
   >(

@@ -33,7 +33,7 @@ import {
 } from '../../api/account_management/passkey';
 import { UserInternal } from '../../model/user';
 import { _castAuth } from '../auth/auth_impl';
-import { getModularInstance } from '@firebase/util';
+import { async, getModularInstance } from '@firebase/util';
 import { signUp } from '../../api/authentication/sign_up';
 import { OperationType } from '../../model/enums';
 import { UserCredentialImpl } from '../user/user_credential_impl';
@@ -165,15 +165,15 @@ export async function enrollPasskey(user: User): Promise<UserCredential> {
       console.log(cred);
 
       // Finish Passkey Enrollment
-      const finalizeEnrollmentRequest: FinalizePasskeyEnrollmentRequest = {
-        idToken,
-        authenticatorRegistrationResponse: {
-          credentialId: encoder.encode(cred?.id),
-          authenticatorAttestationResponse:
-            cred?.response as AuthenticatorAttestationResponse,
-          credentialType: cred?.type
-        }
-      };
+      // const finalizeEnrollmentRequest: FinalizePasskeyEnrollmentRequest = {
+      //   idToken,
+      //   authenticatorRegistrationResponse: {
+      //     credentialId: encoder.encode(cred?.id),
+      //     authenticatorAttestationResponse:
+      //       cred?.response as AuthenticatorAttestationResponse,
+      //     credentialType: cred?.type
+      //   }
+      // };
       // const finalizeEnrollmentResponse = await finalizePasskeyEnrollment(authInternal, finalizeEnrollmentRequest);
       const finalizeEnrollmentResponse: FinalizePasskeyEnrollmentResponse = {
         localId: 'fake-local-id',
@@ -192,4 +192,66 @@ export async function enrollPasskey(user: User): Promise<UserCredential> {
     });
 
   return Promise.reject(new Error('enrollPasskey Not implemented'));
+}
+
+// Debugging
+export async function debugCreateCredential(
+  name: string,
+  debugStartPasskeyEnrollmentResponse: StartPasskeyEnrollmentResponse
+): Promise<PublicKeyCredential> {
+  const option = debugStartPasskeyEnrollmentResponse.credentialCreationOptions!;
+  const encoder = new TextEncoder();
+
+  option.user!.name = name;
+  option.user!.displayName = name;
+  option.user!.id = encoder.encode(option.user.id as unknown as string).buffer;
+
+  const rpId = window.location.hostname;;
+  // const rpId = option.rp?.id!;
+  // const rpId = 'localhost';
+  option.rp!.id = rpId;
+  option.rp!.name = rpId;
+  option.challenge = encoder.encode(option.challenge as unknown as string).buffer;
+  console.log(option);
+  return PasskeyAuthProvider.createCredential(option);
+}
+
+export async function debugPrepareStartPasskeyEnrollmentRequest(
+  user: User
+): Promise<StartPasskeyEnrollmentRequest> {
+  const userInternal = getModularInstance(user) as UserInternal;
+  const idToken = await userInternal.getIdToken();
+  return {
+    idToken
+  };
+}
+
+export async function debugGetStartPasskeyEnrollmentResponse(
+  user: User,
+  request: StartPasskeyEnrollmentRequest
+): Promise<StartPasskeyEnrollmentResponse> {
+  const userInternal = getModularInstance(user) as UserInternal;
+  const authInternal = _castAuth(userInternal.auth);
+  return startPasskeyEnrollment(authInternal, request);
+}
+
+export async function debugPrepareFinalizePasskeyEnrollmentRequest(
+  user: User,
+  credential: PublicKeyCredential
+): Promise<FinalizePasskeyEnrollmentRequest> {
+  const userInternal = getModularInstance(user) as UserInternal;
+  const idToken = await userInternal.getIdToken();
+  return {
+    idToken,
+    registrationResponse: credential
+  };
+}
+
+export async function debugGetFinalizePasskeyEnrollmentResponse(
+  user: User,
+  request: FinalizePasskeyEnrollmentRequest
+): Promise<FinalizePasskeyEnrollmentResponse> {
+  const userInternal = getModularInstance(user) as UserInternal;
+  const authInternal = _castAuth(userInternal.auth);
+  return finalizePasskeyEnrollment(authInternal, request);
 }

@@ -154,6 +154,13 @@
                 Action Code Settings
               </a>
             </li>
+            <li role="presentation">
+              <a href="#debugging-section"
+                 aria-controls="debugging-section"
+                 data-toggle="tab" role="tab">
+                Passkey Debugging
+              </a>
+            </li>
             <li role="presentation" class="visible-xs">
               <a href="#logs-section"
                  aria-controls="logs-section"
@@ -838,6 +845,52 @@
                         id="action-code-settings-reset">Reset</button>
               </form>
             </div>
+            <div class="tab-pane" id="debugging-section">
+              <div class="group">Credential</div>
+              <form class="form form-bordered no-submit">
+                <input type="text" name="Name" id="name"
+                       class="form-control" placeholder="Name" />
+                <textarea type="text" name="Credential" id="credential"
+                          class="form-control" placeholder="Credential"></textarea>
+                <button class="btn btn-block btn-primary" id="create-credential">
+                  Create Credential
+                </button>
+                <button class="btn btn-block btn-primary" id="get-credential">
+                  Get Credential
+                </button>
+              </form>
+
+              <div class="group">Enroll</div>
+              <form class="form form-bordered no-submit">
+                <textarea name="Start Enroll Request" id="start-enroll-request"
+                          class="form-control" placeholder="Request"></textarea>
+                <button class="btn btn-block btn-primary" id="prepare-start-enroll-request">
+                  Prepare Start Enroll Request
+                </button>
+              </form>
+              <form class="form form-bordered no-submit">
+                <textarea name="Start Enroll Response" id="start-enroll-response"
+                          class="form-control" placeholder="Response"></textarea>
+                <button class="btn btn-block btn-primary" id="get-start-enroll-response">
+                  Get Start Enroll Response
+                </button>
+              </form>   
+              <form class="form form-bordered no-submit">
+                <textarea name="Finalize Enroll Request" id="finalize-enroll-request"
+                          class="form-control" placeholder="Request"></textarea>
+                <button class="btn btn-block btn-primary" id="prepare-finalize-enroll-request">
+                  Prepare Finalize Enroll Request
+                </button>
+              </form>
+              <form class="form form-bordered no-submit">
+                <textarea name="Finalize Enroll Response" id="finalize-enroll-response"
+                          class="form-control" placeholder="Response"></textarea>
+                <button class="btn btn-block btn-primary" id="get-finalize-enroll-response">
+                  Get Finalize Enroll Response
+                </button>
+            </form>
+            </div>
+
             <div class="tab-pane" id="logs-section">
               <pre class="well logs"></pre>
               <button class="btn btn-xs btn-default pull-right clear-logs">
