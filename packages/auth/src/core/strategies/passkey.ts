@@ -37,7 +37,6 @@ import { async, getModularInstance } from '@firebase/util';
 import { signUp } from '../../api/authentication/sign_up';
 import { OperationType } from '../../model/enums';
 import { UserCredentialImpl } from '../user/user_credential_impl';
-import { PasskeyAuthProvider } from '../providers/passkey';
 import { signInAnonymously } from './anonymous';
 
 export async function signInWithPasskey(
@@ -45,69 +44,68 @@ export async function signInWithPasskey(
   name: string,
   autoSignUp: boolean = true
 ): Promise<UserCredential> {
-  console.log('!!!!! signInWithPasskey');
-  const authInternal = _castAuth(auth);
-  const encoder = new TextEncoder();
+  // console.log('!!!!! signInWithPasskey');
+  // const authInternal = _castAuth(auth);
+  // const encoder = new TextEncoder();
 
-  // Start Passkey Sign in
-  const startSignInRequest: StartPasskeySigninRequest = {
-    sessionId: 'fake-session-id'
-  };
-  // const startSignInResponse = await startPasskeyEnrollment(authInternal, startSignInRequest);
-  const startSignInResponse: StartPasskeySigninResponse = {
-    localId: 'fake-local-id',
-    credentialRequestOptions: {
-      challenge: encoder.encode('fake-challenge').buffer,
-      rpId: 'localhost',
-      userVerification: 'required'
-    }
-  };
-  // Get crendentials
-  await PasskeyAuthProvider.getCredential(
-    startSignInResponse.credentialRequestOptions
-  )
-    .then(async cred => {
-      // Sign in an existing user
-      console.log('getCredential then');
-      console.log(cred);
-      // Finish Passkey Sign in
-      const finalizeSignInRequest = {
-        sessionId: encoder.encode('fake-session-id'),
-        authenticatorAuthenticationResponse: {
-          credentialId: encoder.encode(cred?.id),
-          authenticatorAssertionResponse: cred?.response,
-          credentialType: cred?.type
-        }
-      };
-      // const finalizeSignInResponse = await finalizePasskeySignin(authInternal, finalizeSignInRequest);
-      const finalizeSignInResponse = {
-        localId: 'fake-local-id',
-        idToken: 'fake-id-token',
-        refreshToken: 'fake-refresh-token'
-      };
-      const operationType = OperationType.SIGN_IN;
-      const userCredential = await UserCredentialImpl._fromIdTokenResponse(
-        authInternal,
-        operationType,
-        finalizeSignInResponse
-      );
-      await auth.updateCurrentUser(userCredential.user);
-      return userCredential;
-    })
-    .catch(err => {
-      console.log('getCredential catch');
-      console.log(err);
-      // Sign up a new user
-      signInAnonymously(authInternal)
-        .then(async userCredential => {
-          await auth.updateCurrentUser(userCredential.user);
-          await enrollPasskey(auth.currentUser!);
-        })
-        .catch(err => {
-          console.log(err);
-        });
-    });
-
+  // // Start Passkey Sign in
+  // const startSignInRequest: StartPasskeySigninRequest = {
+  //   sessionId: 'fake-session-id'
+  // };
+  // // const startSignInResponse = await startPasskeyEnrollment(authInternal, startSignInRequest);
+  // const startSignInResponse: StartPasskeySigninResponse = {
+  //   localId: 'fake-local-id',
+  //   credentialRequestOptions: {
+  //     challenge: encoder.encode('fake-challenge').buffer,
+  //     rpId: 'localhost',
+  //     userVerification: 'required'
+  //   }
+  // };
+  // // Get crendentials
+  // await PasskeyAuthProvider.getCredential(
+  //   startSignInResponse.credentialRequestOptions
+  // )
+  //   .then(async cred => {
+  //     // Sign in an existing user
+  //     console.log('getCredential then');
+  //     console.log(cred);
+  //     // Finish Passkey Sign in
+  //     const finalizeSignInRequest = {
+  //       sessionId: encoder.encode('fake-session-id'),
+  //       authenticatorAuthenticationResponse: {
+  //         credentialId: encoder.encode(cred?.id),
+  //         authenticatorAssertionResponse: cred?.response,
+  //         credentialType: cred?.type
+  //       }
+  //     };
+  //     // const finalizeSignInResponse = await finalizePasskeySignin(authInternal, finalizeSignInRequest);
+  //     const finalizeSignInResponse = {
+  //       localId: 'fake-local-id',
+  //       idToken: 'fake-id-token',
+  //       refreshToken: 'fake-refresh-token'
+  //     };
+  //     const operationType = OperationType.SIGN_IN;
+  //     const userCredential = await UserCredentialImpl._fromIdTokenResponse(
+  //       authInternal,
+  //       operationType,
+  //       finalizeSignInResponse
+  //     );
+  //     await auth.updateCurrentUser(userCredential.user);
+  //     return userCredential;
+  //   })
+  //   .catch(err => {
+  //     console.log('getCredential catch');
+  //     console.log(err);
+  //     // Sign up a new user
+  //     signInAnonymously(authInternal)
+  //       .then(async userCredential => {
+  //         await auth.updateCurrentUser(userCredential.user);
+  //         await enrollPasskey(auth.currentUser!);
+  //       })
+  //       .catch(err => {
+  //         console.log(err);
+  //       });
+  //   });
   return Promise.reject(new Error('signInWithPasskey Not implemented'));
 }
 
@@ -118,80 +116,102 @@ export async function signInWithPasskey(
  *
  * @public
  */
-export async function enrollPasskey(user: User): Promise<UserCredential> {
-  console.log('!!!!! enrollPasskey');
+export async function enrollPasskey(
+  user: User,
+  name: string
+): Promise<UserCredential> {
   const userInternal = getModularInstance(user) as UserInternal;
-  const encoder = new TextEncoder();
+  const authInternal = _castAuth(userInternal.auth);
 
   // Start Passkey Enrollment
   const idToken = await userInternal.getIdToken();
   const startEnrollmentRequest: StartPasskeyEnrollmentRequest = {
     idToken
   };
-  // const startEnrollmentResponse = await startPasskeyEnrollment(authInternal, startEnrollmentRequest);
-  const startEnrollmentResponse: StartPasskeyEnrollmentResponse = {
-    credentialCreationOptions: {
-      rp: {
-        id: 'localhost',
-        name: 'localhost' // To be set
-      },
-      user: {
-        id: encoder.encode('fake-user-id'),
-        name: user.email ? user.email! : 'fake-user-name', // To be set
-        displayName: user.displayName ? user.displayName! : 'fake-display-name' // To be set
-      },
-      challenge: encoder.encode('fake-challenge').buffer,
-      pubKeyCredParams: [
-        {
-          type: 'public-key',
-          alg: -7 // "ES256" IANA COSE Algorithms registry value
-        },
-        {
-          type: 'public-key',
-          alg: -257 // "RS256" IANA COSE Algorithms registry value
-        }
-      ],
-      authenticatorSelection: {},
-      excludeCredentials: []
-    }
-  };
+  const startEnrollmentResponse = await startPasskeyEnrollment(authInternal, startEnrollmentRequest);
 
   // Create the crendential
-  await PasskeyAuthProvider.createCredential(
-    startEnrollmentResponse.credentialCreationOptions!
-  )
-    .then(async cred => {
-      console.log('createCredential then');
-      console.log(cred);
+  try {
+    const options = getPasskeyCredentialCreationOptions(
+      startEnrollmentResponse,
+      name
+    );
+    const credential = (await navigator.credentials.create({
+      publicKey: options
+    })) as PublicKeyCredential;
+    const idToken = await userInternal.getIdToken();
+    const finalizeEnrollmentRequest: FinalizePasskeyEnrollmentRequest = {
+      idToken,
+      registrationResponse: credential
+    };
+    const finalizeEnrollmentResponse = await finalizePasskeyEnrollment(authInternal, finalizeEnrollmentRequest);
 
-      // Finish Passkey Enrollment
-      // const finalizeEnrollmentRequest: FinalizePasskeyEnrollmentRequest = {
-      //   idToken,
-      //   authenticatorRegistrationResponse: {
-      //     credentialId: encoder.encode(cred?.id),
-      //     authenticatorAttestationResponse:
-      //       cred?.response as AuthenticatorAttestationResponse,
-      //     credentialType: cred?.type
-      //   }
-      // };
-      // const finalizeEnrollmentResponse = await finalizePasskeyEnrollment(authInternal, finalizeEnrollmentRequest);
-      const finalizeEnrollmentResponse: FinalizePasskeyEnrollmentResponse = {
-        localId: 'fake-local-id',
-        idToken: 'fake-id-token',
-        refreshToken: 'fake-refresh-token'
-      };
-      const operationType = OperationType.LINK;
-      const userCredential = await UserCredentialImpl._fromIdTokenResponse(
-        userInternal.auth,
-        operationType,
-        finalizeEnrollmentResponse
-      );
-    })
-    .catch(err => {
-      console.log(err);
-    });
+    const operationType = OperationType.LINK;
+    const userCredential = await UserCredentialImpl._fromIdTokenResponse(
+      userInternal.auth,
+      operationType,
+      finalizeEnrollmentResponse
+    );
+    return userCredential;
+  } catch (err) {
+    return Promise.reject(err);
+  }
+}
 
-  return Promise.reject(new Error('enrollPasskey Not implemented'));
+  // static async getCredential(
+  //   options: PublicKeyCredentialRequestOptions
+  // ): Promise<PublicKeyCredential> {
+  //   const publicKey = {
+  //     challenge: options.challenge,
+  //     rpId: options.rpId,
+  //     userVerification: options.userVerification,
+  //     mediation: 'conditional'
+  //   };
+
+  //   try {
+  //     const cred = (await navigator.credentials.get({
+  //       publicKey
+  //     })) as PublicKeyCredential;
+  //     return cred;
+  //   } catch (err) {
+  //     console.error(err);
+  //     throw err;
+  //   }
+  // }
+
+function getPasskeyCredentialCreationOptions(response: StartPasskeyEnrollmentResponse, name: string = ''): PublicKeyCredentialCreationOptions {
+  const options = response.credentialCreationOptions!;
+  const encoder = new TextEncoder();
+
+  if(name === '') {
+    name = 'Unnamed account (Web)';
+  }
+
+  options.user!.name = name;
+  options.user!.displayName = name;
+  options.user!.id = encoder.encode(
+    options.user.id as unknown as string
+  ).buffer;
+
+  const rpId = window.location.hostname;
+  // const rpId = option.rp?.id!;
+  // const rpId = 'localhost';
+  options.rp!.id = rpId;
+  options.rp!.name = rpId;
+  options.challenge = encoder.encode(
+    options.challenge as unknown as string
+  ).buffer;
+
+  options.pubKeyCredParams.forEach(param => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const tempParam = param as any;
+    if (tempParam.credentialType) {
+      param.type = tempParam.credentialType;
+      delete tempParam.credentialType;
+    }
+  });
+
+  return options;
 }
 
 // Debugging
@@ -199,21 +219,14 @@ export async function debugCreateCredential(
   name: string,
   debugStartPasskeyEnrollmentResponse: StartPasskeyEnrollmentResponse
 ): Promise<PublicKeyCredential> {
-  const option = debugStartPasskeyEnrollmentResponse.credentialCreationOptions!;
-  const encoder = new TextEncoder();
-
-  option.user!.name = name;
-  option.user!.displayName = name;
-  option.user!.id = encoder.encode(option.user.id as unknown as string).buffer;
-
-  const rpId = window.location.hostname;;
-  // const rpId = option.rp?.id!;
-  // const rpId = 'localhost';
-  option.rp!.id = rpId;
-  option.rp!.name = rpId;
-  option.challenge = encoder.encode(option.challenge as unknown as string).buffer;
-  console.log(option);
-  return PasskeyAuthProvider.createCredential(option);
+  const options = getPasskeyCredentialCreationOptions(
+    debugStartPasskeyEnrollmentResponse,
+    name
+  );
+  const credential = (await navigator.credentials.create({
+    publicKey: options
+  })) as PublicKeyCredential;
+  return credential;
 }
 
 export async function debugPrepareStartPasskeyEnrollmentRequest(

@@ -25,13 +25,6 @@ import {
 } from '../index';
 import { IdTokenResponse } from '../../model/id_token';
 
-// Common types for passkey enrollment and sign-in.
-// export interface PublicKeyCredentialRequestOptions {
-//   challenge: string;
-//   rpId: string;
-//   userVerification: string;
-// }
-
 export interface AuthenticatorAuthenticationResponse {
   credentialId: Uint8Array;
   credentialType?: string;
@@ -43,19 +36,6 @@ export interface AuthenticatorRegistrationResponse {
   credentialType?: string;
   authenticatorAttestationResponse: AuthenticatorAttestationResponse;
 }
-
-//  export interface AuthenticatorAssertionResponse {
-//    clientDataJSON: ArrayBuffer;
-//    authenticatorData: ArrayBuffer;
-//    signature: ArrayBuffer;
-//    userHandle: ArrayBuffer | null;
-//  }
-
-// export interface AuthenticatorAttestationResponse {
-//   clientDataJSON: Uint8Array;
-//   attestationObject: Uint8Array;
-//   transports: string[];
-// }
 
 // Enrollment types.
 export interface StartPasskeyEnrollmentRequest {

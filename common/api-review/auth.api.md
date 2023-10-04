@@ -376,7 +376,7 @@ export interface EmulatorConfig {
 }
 
 // @public
-export function enrollPasskey(user: User): Promise<UserCredential>;
+export function enrollPasskey(user: User, name: string): Promise<UserCredential>;
 
 export { ErrorFn }
 

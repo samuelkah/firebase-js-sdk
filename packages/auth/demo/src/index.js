@@ -80,7 +80,7 @@ import {
   debugPrepareStartPasskeyEnrollmentRequest,
   debugGetStartPasskeyEnrollmentResponse,
   debugPrepareFinalizePasskeyEnrollmentRequest,
-  debugGetFinalizePasskeyEnrollmentResponse,
+  debugGetFinalizePasskeyEnrollmentResponse
 } from '@firebase/auth';
 
 import { config } from './config';
@@ -527,26 +527,27 @@ function onInitializeRecaptchaConfig() {
 }
 
 function onSignInWithPasskey() {
-  const passkeyUsername = $('#passkey-username').val();
-  console.log(passkeyUsername);
-
-  signInWithPasskey(auth, passkeyUsername).then(onAuthSuccess, onAuthError);
-  // enrollPasskey(user, passkeyUsername).then(onAuthSuccess, onAuthError);
+  const name = $('#signin-passkey-name').val();
+  signInWithPasskey(auth, name).then(onAuthSuccess, onAuthError);
 }
 
 function onEnrollPasskey() {
-  enrollPasskey(activeUser()).then(onAuthUserCredentialSuccess, onAuthError);
+  const name = $('#enroll-passkey-name').val();
+  enrollPasskey(activeUser(), name).then(
+    onAuthUserCredentialSuccess,
+    onAuthError
+  );
 }
 
-    function arrayBufferToBase64(buffer) {
-      let binary = '';
-      const bytes = new Uint8Array(buffer);
-      const len = bytes.byteLength;
-      for (let i = 0; i < len; i++) {
-        binary += String.fromCharCode(bytes[i]);
-      }
-      return window.btoa(binary);
-    }
+function arrayBufferToBase64(buffer) {
+  let binary = '';
+  const bytes = new Uint8Array(buffer);
+  const len = bytes.byteLength;
+  for (let i = 0; i < len; i++) {
+    binary += String.fromCharCode(bytes[i]);
+  }
+  return window.btoa(binary);
+}
 
 function publicKeyCredentialToJSON(pubKeyCred) {
   if (pubKeyCred instanceof PublicKeyCredential) {
@@ -585,18 +586,17 @@ function publicKeyCredentialToJSON(pubKeyCred) {
   throw new Error('Input was not a PublicKeyCredential object');
 }
 
-  function base64ToArrayBuffer(base64) {
-    const binaryString = window.atob(base64);
-    const len = binaryString.length;
-    const bytes = new Uint8Array(len);
-    for (let i = 0; i < len; i++) {
-      bytes[i] = binaryString.charCodeAt(i);
-    }
-    return bytes.buffer;
+function base64ToArrayBuffer(base64) {
+  const binaryString = window.atob(base64);
+  const len = binaryString.length;
+  const bytes = new Uint8Array(len);
+  for (let i = 0; i < len; i++) {
+    bytes[i] = binaryString.charCodeAt(i);
   }
+  return bytes.buffer;
+}
 
 function JSONtoPublicKeyCredential(jsonString) {
-
   const serializedCredential = JSON.parse(jsonString);
 
   const pubKeyCred = {
@@ -661,7 +661,7 @@ function JSONtoPublicKeyCredential(jsonString) {
 async function onCreateCredential() {
   const name = $('#name').val();
   const response = JSON.parse($('#start-enroll-response').val());
-  console.log(response)
+  console.log(response);
   const credential = await debugCreateCredential(name, response);
   const cred_str = publicKeyCredentialToJSON(credential);
   $('#credential').val(cred_str);
@@ -2406,7 +2406,7 @@ function initApp() {
   $('#password-reset-password').blur(() => onBlurPassword('#password-reset-'));
 
   $('#sign-in-with-passkey').click(onSignInWithPasskey);
-  
+
   $('#sign-in-with-generic-idp-credential').click(
     onSignInWithGenericIdPCredential
   );

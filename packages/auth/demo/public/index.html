@@ -257,8 +257,8 @@
               <!-- Passkeys -->
               <div class="group">Passkeys</div>
               <form class="form form-bordered no-submit">
-                <input type="test" name="passkey-username" id="passkey-username"
-                       class="form-control" placeholder="User name" autocomplete="username webauthn" />
+                <input type="test" name="signin-passkey-name" id="signin-passkey-username"
+                       class="form-control" placeholder="Name" />
                 <button class="btn btn-block btn-primary"
                       id="sign-in-with-passkey">
                 Sign in with Passkey
@@ -532,15 +532,21 @@
                 </button>
               </form>
 
+              <!-- Passkey -->
+              <div class="group">Passkey</div>
+              <form class="form form-bordered no-submit">
+                <input type="test" name="enroll-passkey-name" id="enroll-passkey-name"
+                          class="form-control" placeholder="Name" />
+                <button class="btn btn-block btn-primary"
+                          id="enroll-passkey">
+                    Enroll Passkey
+                </button>
+              </form> 
 
               <!-- Linking/Unlinking -->
               <div class="group">Linking/Unlinking</div>
               <button class="btn btn-block btn-default" id="get-provider-data">
                 Get Providers Data
-              </button>
-              <button class="btn btn-block btn-primary"
-                        id="enroll-passkey">
-                  Enroll Passkey
               </button>
               <form class="form form-bordered no-submit">
                 <input type="email" name="email" id="link-email"
