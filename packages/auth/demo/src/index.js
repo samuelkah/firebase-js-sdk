@@ -688,9 +688,12 @@ async function onGetStartEnrollResponse() {
 async function onPrepareFinalizeEnrollRequest() {
   const cred_str = $('#credential').val();
   const credential = JSONtoPublicKeyCredential(cred_str);
+  const name = $('#name').val();
+  console.log(credential);
   const request = await debugPrepareFinalizePasskeyEnrollmentRequest(
     activeUser(),
-    credential
+    credential,
+    name
   );
   $('#finalize-enroll-request').val(JSON.stringify(request));
 }

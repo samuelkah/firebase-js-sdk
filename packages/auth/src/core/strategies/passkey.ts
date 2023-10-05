@@ -250,13 +250,15 @@ export async function debugGetStartPasskeyEnrollmentResponse(
 
 export async function debugPrepareFinalizePasskeyEnrollmentRequest(
   user: User,
-  credential: PublicKeyCredential
+  credential: PublicKeyCredential,
+  name: string
 ): Promise<FinalizePasskeyEnrollmentRequest> {
   const userInternal = getModularInstance(user) as UserInternal;
   const idToken = await userInternal.getIdToken();
   return {
     idToken,
-    registrationResponse: credential
+    registrationResponse: credential,
+    name
   };
 }
 

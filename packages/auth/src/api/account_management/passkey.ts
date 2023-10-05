@@ -66,6 +66,7 @@ export interface FinalizePasskeyEnrollmentRequest {
   idToken?: string;
   tenantId?: string;
   registrationResponse?: PublicKeyCredential;
+  name?: string;
 }
 
 export interface FinalizePasskeyEnrollmentResponse extends IdTokenResponse {

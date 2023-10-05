@@ -318,7 +318,7 @@ export function debugGetFinalizePasskeyEnrollmentResponse(user: User, request: F
 export function debugGetStartPasskeyEnrollmentResponse(user: User, request: StartPasskeyEnrollmentRequest): Promise<StartPasskeyEnrollmentResponse>;
 
 // @public (undocumented)
-export function debugPrepareFinalizePasskeyEnrollmentRequest(user: User, credential: PublicKeyCredential): Promise<FinalizePasskeyEnrollmentRequest>;
+export function debugPrepareFinalizePasskeyEnrollmentRequest(user: User, credential: PublicKeyCredential, name: string): Promise<FinalizePasskeyEnrollmentRequest>;
 
 // @public (undocumented)
 export function debugPrepareStartPasskeyEnrollmentRequest(user: User): Promise<StartPasskeyEnrollmentRequest>;
