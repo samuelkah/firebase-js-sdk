@@ -80,7 +80,11 @@ import {
   debugPrepareStartPasskeyEnrollmentRequest,
   debugGetStartPasskeyEnrollmentResponse,
   debugPrepareFinalizePasskeyEnrollmentRequest,
-  debugGetFinalizePasskeyEnrollmentResponse
+  debugGetFinalizePasskeyEnrollmentResponse,
+  debugPrepareStartPasskeySignInRequest,
+  debugGetStartPasskeySignInResponse,
+  debugPrepareFinalizePasskeySignInRequest,
+  debugGetFinalizePasskeySignInResponse
 } from '@firebase/auth';
 
 import { config } from './config';
@@ -686,14 +690,14 @@ async function onGetStartEnrollResponse() {
 }
 
 async function onPrepareFinalizeEnrollRequest() {
+  const name = $('#name').val();
   const cred_str = $('#credential').val();
   const credential = JSONtoPublicKeyCredential(cred_str);
-  const name = $('#name').val();
   console.log(credential);
   const request = await debugPrepareFinalizePasskeyEnrollmentRequest(
     activeUser(),
-    credential,
-    name
+    name,
+    credential
   );
   $('#finalize-enroll-request').val(JSON.stringify(request));
 }
@@ -705,6 +709,40 @@ async function onGetFinalizeEnrollResponse() {
     request
   );
   $('#finalize-enroll-response').val(JSON.stringify(response));
+}
+
+async function onPrepareStartSignInRequest() {
+  const request = await debugPrepareStartPasskeySignInRequest();
+  $('#start-signin-request').val(JSON.stringify(request));
+}
+
+async function onGetStartSignInResponse() {
+  const request = JSON.parse($('#start-signin-request').val());
+  const response = await debugGetStartPasskeySignInResponse(
+    auth,
+    request
+  );
+  $('#start-signin-response').val(JSON.stringify(response));
+}
+
+async function onPrepareFinalizeSignInRequest() {
+  const name = $('#name').val();
+  const cred_str = $('#credential').val();
+  const credential = JSONtoPublicKeyCredential(cred_str);
+  console.log(credential);
+  const request = await debugPrepareFinalizePasskeySignInRequest(
+    credential
+  );
+  $('#finalize-signin-request').val(JSON.stringify(request));
+}
+
+async function onGetFinalizeSignInResponse() {
+  const request = JSON.parse($('#finalize-signin-request').val());
+  const response = await debugGetFinalizePasskeySignInResponse(
+    auth,
+    request
+  );
+  $('#finalize-signin-response').val(JSON.stringify(response));
 }
 
 /**
@@ -2451,6 +2489,11 @@ function initApp() {
   $('#get-start-enroll-response').click(onGetStartEnrollResponse);
   $('#prepare-finalize-enroll-request').click(onPrepareFinalizeEnrollRequest);
   $('#get-finalize-enroll-response').click(onGetFinalizeEnrollResponse);
+
+  $('#prepare-start-signin-request').click(onPrepareStartSignInRequest);
+  $('#get-start-signin-response').click(onGetStartSignInResponse);
+  $('#prepare-finalize-signin-request').click(onPrepareFinalizeSignInRequest);
+  $('#get-finalize-signin-response').click(onGetFinalizeSignInResponse);
 
   $('#get-provider-data').click(onGetProviderData);
   $('#enroll-passkey').click(onEnrollPasskey);

@@ -312,16 +312,34 @@ export const debugErrorMap: AuthErrorMap;
 // @public (undocumented)
 export function debugGetFinalizePasskeyEnrollmentResponse(user: User, request: FinalizePasskeyEnrollmentRequest): Promise<FinalizePasskeyEnrollmentResponse>;
 
+// Warning: (ae-forgotten-export) The symbol "FinalizePasskeySignInRequest" needs to be exported by the entry point index.d.ts
+// Warning: (ae-forgotten-export) The symbol "FinalizePasskeySignInResponse" needs to be exported by the entry point index.d.ts
+//
+// @public (undocumented)
+export function debugGetFinalizePasskeySignInResponse(auth: Auth, request: FinalizePasskeySignInRequest): Promise<FinalizePasskeySignInResponse>;
+
 // Warning: (ae-forgotten-export) The symbol "StartPasskeyEnrollmentRequest" needs to be exported by the entry point index.d.ts
 //
 // @public (undocumented)
 export function debugGetStartPasskeyEnrollmentResponse(user: User, request: StartPasskeyEnrollmentRequest): Promise<StartPasskeyEnrollmentResponse>;
 
+// Warning: (ae-forgotten-export) The symbol "StartPasskeySignInRequest" needs to be exported by the entry point index.d.ts
+// Warning: (ae-forgotten-export) The symbol "StartPasskeySignInResponse" needs to be exported by the entry point index.d.ts
+//
 // @public (undocumented)
-export function debugPrepareFinalizePasskeyEnrollmentRequest(user: User, credential: PublicKeyCredential, name: string): Promise<FinalizePasskeyEnrollmentRequest>;
+export function debugGetStartPasskeySignInResponse(auth: Auth, request: StartPasskeySignInRequest): Promise<StartPasskeySignInResponse>;
+
+// @public (undocumented)
+export function debugPrepareFinalizePasskeyEnrollmentRequest(user: User, name: string, credential: PublicKeyCredential): Promise<FinalizePasskeyEnrollmentRequest>;
+
+// @public (undocumented)
+export function debugPrepareFinalizePasskeySignInRequest(credential: PublicKeyCredential): Promise<FinalizePasskeySignInRequest>;
 
 // @public (undocumented)
 export function debugPrepareStartPasskeyEnrollmentRequest(user: User): Promise<StartPasskeyEnrollmentRequest>;
+
+// @public (undocumented)
+export function debugPrepareStartPasskeySignInRequest(): Promise<StartPasskeySignInRequest>;
 
 // @public
 export function deleteUser(user: User): Promise<void>;

@@ -301,7 +301,11 @@ export {
   debugPrepareStartPasskeyEnrollmentRequest,
   debugGetStartPasskeyEnrollmentResponse,
   debugPrepareFinalizePasskeyEnrollmentRequest,
-  debugGetFinalizePasskeyEnrollmentResponse
+  debugGetFinalizePasskeyEnrollmentResponse,
+  debugPrepareStartPasskeySignInRequest,
+  debugGetStartPasskeySignInResponse,
+  debugPrepareFinalizePasskeySignInRequest,
+  debugGetFinalizePasskeySignInResponse
 } from './strategies/passkey';
 
 // core

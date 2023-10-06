@@ -24,12 +24,12 @@ import {
   finalizePasskeyEnrollment,
   FinalizePasskeyEnrollmentRequest,
   FinalizePasskeyEnrollmentResponse,
-  startPasskeySignin,
-  StartPasskeySigninRequest,
-  StartPasskeySigninResponse,
-  finalizePasskeySignin,
-  FinalizePasskeySigninRequest,
-  FinalizePasskeySigninResponse
+  startPasskeySignIn,
+  StartPasskeySignInRequest,
+  StartPasskeySignInResponse,
+  finalizePasskeySignIn,
+  FinalizePasskeySignInRequest,
+  FinalizePasskeySignInResponse
 } from '../../api/account_management/passkey';
 import { UserInternal } from '../../model/user';
 import { _castAuth } from '../auth/auth_impl';
@@ -128,7 +128,10 @@ export async function enrollPasskey(
   const startEnrollmentRequest: StartPasskeyEnrollmentRequest = {
     idToken
   };
-  const startEnrollmentResponse = await startPasskeyEnrollment(authInternal, startEnrollmentRequest);
+  const startEnrollmentResponse = await startPasskeyEnrollment(
+    authInternal,
+    startEnrollmentRequest
+  );
 
   // Create the crendential
   try {
@@ -144,7 +147,10 @@ export async function enrollPasskey(
       idToken,
       registrationResponse: credential
     };
-    const finalizeEnrollmentResponse = await finalizePasskeyEnrollment(authInternal, finalizeEnrollmentRequest);
+    const finalizeEnrollmentResponse = await finalizePasskeyEnrollment(
+      authInternal,
+      finalizeEnrollmentRequest
+    );
 
     const operationType = OperationType.LINK;
     const userCredential = await UserCredentialImpl._fromIdTokenResponse(
@@ -158,32 +164,35 @@ export async function enrollPasskey(
   }
 }
 
-  // static async getCredential(
-  //   options: PublicKeyCredentialRequestOptions
-  // ): Promise<PublicKeyCredential> {
-  //   const publicKey = {
-  //     challenge: options.challenge,
-  //     rpId: options.rpId,
-  //     userVerification: options.userVerification,
-  //     mediation: 'conditional'
-  //   };
+// static async getCredential(
+//   options: PublicKeyCredentialRequestOptions
+// ): Promise<PublicKeyCredential> {
+//   const publicKey = {
+//     challenge: options.challenge,
+//     rpId: options.rpId,
+//     userVerification: options.userVerification,
+//     mediation: 'conditional'
+//   };
 
-  //   try {
-  //     const cred = (await navigator.credentials.get({
-  //       publicKey
-  //     })) as PublicKeyCredential;
-  //     return cred;
-  //   } catch (err) {
-  //     console.error(err);
-  //     throw err;
-  //   }
-  // }
+//   try {
+//     const cred = (await navigator.credentials.get({
+//       publicKey
+//     })) as PublicKeyCredential;
+//     return cred;
+//   } catch (err) {
+//     console.error(err);
+//     throw err;
+//   }
+// }
 
-function getPasskeyCredentialCreationOptions(response: StartPasskeyEnrollmentResponse, name: string = ''): PublicKeyCredentialCreationOptions {
+function getPasskeyCredentialCreationOptions(
+  response: StartPasskeyEnrollmentResponse,
+  name: string = ''
+): PublicKeyCredentialCreationOptions {
   const options = response.credentialCreationOptions!;
   const encoder = new TextEncoder();
 
-  if(name === '') {
+  if (name === '') {
     name = 'Unnamed account (Web)';
   }
 
@@ -250,8 +259,8 @@ export async function debugGetStartPasskeyEnrollmentResponse(
 
 export async function debugPrepareFinalizePasskeyEnrollmentRequest(
   user: User,
-  credential: PublicKeyCredential,
-  name: string
+  name: string,
+  credential: PublicKeyCredential
 ): Promise<FinalizePasskeyEnrollmentRequest> {
   const userInternal = getModularInstance(user) as UserInternal;
   const idToken = await userInternal.getIdToken();
@@ -269,4 +278,32 @@ export async function debugGetFinalizePasskeyEnrollmentResponse(
   const userInternal = getModularInstance(user) as UserInternal;
   const authInternal = _castAuth(userInternal.auth);
   return finalizePasskeyEnrollment(authInternal, request);
+}
+
+export async function debugPrepareStartPasskeySignInRequest(): Promise<StartPasskeySignInRequest> {
+  return {};
+}
+
+export async function debugGetStartPasskeySignInResponse(
+  auth: Auth,
+  request: StartPasskeySignInRequest
+): Promise<StartPasskeySignInResponse> {
+  const authInternal = _castAuth(auth);
+  return startPasskeySignIn(authInternal, request);
+}
+
+export async function debugPrepareFinalizePasskeySignInRequest(
+  credential: PublicKeyCredential
+): Promise<FinalizePasskeySignInRequest> {
+  return {
+    authenticatorAuthenticationResponse: credential
+  };
+}
+
+export async function debugGetFinalizePasskeySignInResponse(
+  auth: Auth,
+  request: FinalizePasskeySignInRequest
+): Promise<FinalizePasskeySignInResponse> {
+  const authInternal = _castAuth(auth);
+  return finalizePasskeySignIn(authInternal, request);
 }

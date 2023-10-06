@@ -91,22 +91,22 @@ export async function finalizePasskeyEnrollment(
 }
 
 // Sign-in types.
-export interface StartPasskeySigninRequest {
+export interface StartPasskeySignInRequest {
   sessionId?: string;
   tenantId?: string;
 }
 
-export interface StartPasskeySigninResponse extends IdTokenResponse {
+export interface StartPasskeySignInResponse extends IdTokenResponse {
   credentialRequestOptions: PublicKeyCredentialRequestOptions;
 }
 
-export async function startPasskeySignin(
+export async function startPasskeySignIn(
   auth: Auth,
-  request: StartPasskeySigninRequest
-): Promise<StartPasskeySigninResponse> {
+  request: StartPasskeySignInRequest
+): Promise<StartPasskeySignInResponse> {
   return _performApiRequest<
-    StartPasskeySigninRequest,
-    StartPasskeySigninResponse
+    StartPasskeySignInRequest,
+    StartPasskeySignInResponse
   >(
     auth,
     HttpMethod.POST,
@@ -115,24 +115,24 @@ export async function startPasskeySignin(
   );
 }
 
-export interface FinalizePasskeySigninRequest {
-  authenticatorAuthenticationResponse?: AuthenticatorAuthenticationResponse;
+export interface FinalizePasskeySignInRequest {
+  authenticatorAuthenticationResponse?: PublicKeyCredential;
   sessionId?: Uint8Array;
   tenantId?: string;
 }
 
-export interface FinalizePasskeySigninResponse extends IdTokenResponse {
+export interface FinalizePasskeySignInResponse extends IdTokenResponse {
   idToken?: string;
   refreshToken?: string;
 }
 
-export async function finalizePasskeySignin(
+export async function finalizePasskeySignIn(
   auth: Auth,
-  request: FinalizePasskeySigninRequest
-): Promise<FinalizePasskeySigninResponse> {
+  request: FinalizePasskeySignInRequest
+): Promise<FinalizePasskeySignInResponse> {
   return _performApiRequest<
-    FinalizePasskeySigninRequest,
-    FinalizePasskeySigninResponse
+    FinalizePasskeySignInRequest,
+    FinalizePasskeySignInResponse
   >(
     auth,
     HttpMethod.POST,

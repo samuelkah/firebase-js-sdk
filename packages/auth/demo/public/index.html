@@ -158,7 +158,7 @@
               <a href="#debugging-section"
                  aria-controls="debugging-section"
                  data-toggle="tab" role="tab">
-                Passkey Debugging
+                Debugging
               </a>
             </li>
             <li role="presentation" class="visible-xs">
@@ -896,6 +896,36 @@
                 </button>
             </form>
             </div>
+
+            <div class="group">Sign In</div>
+              <form class="form form-bordered no-submit">
+                <textarea name="Start Sign In Request" id="start-signin-request"
+                          class="form-control" placeholder="Request"></textarea>
+                <button class="btn btn-block btn-primary" id="prepare-start-signin-request">
+                  Prepare Start Sign In Request
+                </button>
+              </form>
+              <form class="form form-bordered no-submit">
+                <textarea name="Start Sign In Response" id="start-signin-response"
+                          class="form-control" placeholder="Response"></textarea>
+                <button class="btn btn-block btn-primary" id="get-start-signin-response">
+                  Get Start Sign In Response
+                </button>
+              </form>
+              <form class="form form-bordered no-submit">
+                <textarea name="Finalize Sign In Request" id="finalize-signin-request"
+                          class="form-control" placeholder="Request"></textarea>
+                <button class="btn btn-block btn-primary" id="prepare-finalize-signin-request">
+                  Prepare Finalize Sign In Request
+                </button>
+              </form>
+              <form class="form form-bordered no-submit">
+                <textarea name="Finalize Sign In Response" id="finalize-signin-response"
+                          class="form-control" placeholder="Response"></textarea>
+                <button class="btn btn-block btn-primary" id="get-finalize-signin-response">
+                  Get Finalize Sign In Response
+                </button>
+              </form>
 
             <div class="tab-pane" id="logs-section">
               <pre class="well logs"></pre>
