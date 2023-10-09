@@ -32,7 +32,11 @@ import { AuthErrorCode } from '../errors';
 import { _fail } from '../util/assert';
 import { AuthCredential } from './auth_credential';
 import { injectRecaptchaFields } from '../../platform_browser/recaptcha/recaptcha_enterprise_verifier';
-import { RecaptchaActionName, RecaptchaClientType } from '../../api';
+import {
+  RecaptchaActionName,
+  RecaptchaClientType,
+  RecaptchaProvider
+} from '../../api';
 /**
  * Interface that represents the credentials returned by {@link EmailAuthProvider} for
  * {@link ProviderId}.PASSWORD
@@ -123,7 +127,11 @@ export class EmailAuthCredential extends AuthCredential {
           password: this._password,
           clientType: RecaptchaClientType.WEB
         };
-        if (auth._getRecaptchaConfig()?.emailPasswordEnabled) {
+        if (
+          auth
+            ._getRecaptchaConfig()
+            ?.isProviderEnabled(RecaptchaProvider.EMAIL_PASSWORD_PROVIDER)
+        ) {
           const requestWithRecaptcha = await injectRecaptchaFields(
             auth,
             request,

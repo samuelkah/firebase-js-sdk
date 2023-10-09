@@ -33,7 +33,11 @@ import { _assert } from '../util/assert';
 import { getModularInstance } from '@firebase/util';
 import { _castAuth } from '../auth/auth_impl';
 import { injectRecaptchaFields } from '../../platform_browser/recaptcha/recaptcha_enterprise_verifier';
-import { RecaptchaActionName, RecaptchaClientType } from '../../api';
+import {
+  RecaptchaActionName,
+  RecaptchaClientType,
+  RecaptchaProvider
+} from '../../api';
 
 /**
  * Sends a sign-in email link to the user with the specified email.
@@ -101,7 +105,11 @@ export async function sendSignInLinkToEmail(
       );
     }
   }
-  if (authInternal._getRecaptchaConfig()?.emailPasswordEnabled) {
+  if (
+    authInternal
+      ._getRecaptchaConfig()
+      ?.isProviderEnabled(RecaptchaProvider.EMAIL_PASSWORD_PROVIDER)
+  ) {
     const requestWithRecaptcha = await injectRecaptchaFields(
       authInternal,
       request,

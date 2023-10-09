@@ -38,7 +38,11 @@ import { getModularInstance } from '@firebase/util';
 import { OperationType } from '../../model/enums';
 import { injectRecaptchaFields } from '../../platform_browser/recaptcha/recaptcha_enterprise_verifier';
 import { IdTokenResponse } from '../../model/id_token';
-import { RecaptchaActionName, RecaptchaClientType } from '../../api';
+import {
+  RecaptchaActionName,
+  RecaptchaClientType,
+  RecaptchaProvider
+} from '../../api';
 
 /**
  * Updates the password policy cached in the {@link Auth} instance if a policy is already
@@ -103,7 +107,11 @@ export async function sendPasswordResetEmail(
     email,
     clientType: RecaptchaClientType.WEB
   };
-  if (authInternal._getRecaptchaConfig()?.emailPasswordEnabled) {
+  if (
+    authInternal
+      ._getRecaptchaConfig()
+      ?.isProviderEnabled(RecaptchaProvider.EMAIL_PASSWORD_PROVIDER)
+  ) {
     const requestWithRecaptcha = await injectRecaptchaFields(
       authInternal,
       request,
@@ -319,7 +327,11 @@ export async function createUserWithEmailAndPassword(
     clientType: RecaptchaClientType.WEB
   };
   let signUpResponse: Promise<IdTokenResponse>;
-  if (authInternal._getRecaptchaConfig()?.emailPasswordEnabled) {
+  if (
+    authInternal
+      ._getRecaptchaConfig()
+      ?.isProviderEnabled(RecaptchaProvider.EMAIL_PASSWORD_PROVIDER)
+  ) {
     const requestWithRecaptcha = await injectRecaptchaFields(
       authInternal,
       request,
