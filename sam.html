@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="styles.css">
+  <title>Cloud Form</title>
+</head>
+
+<body>
+
+  <h3> Order Form</h3>
+
+  <div>
+    <form id="clearFrom">
+      <label for="fname">Full Name</label>
+      <input type="text" id="fname" name="Full Name" placeholder="Your full Name..">
+
+      <label for="shoetype"> Type of shoe you want to order</label>
+      <input type="text" id="lname" name="Type of fhpe" placeholder=" Enter shoe type..">
+
+      <label for="country">Country</label>
+      <select id="country" name="country">
+        <option value="nigeria">Kenya</option>
+        <option value="nigeria">Nigeria</option>
+        <option value="canada">Canada</option>
+        <option value="usa">USA</option>
+      </select>
+
+      <button type="submit" id="submit">Submit</button>
+    </form>
+  </div>
+  <script src="https://www.gstatic.com/firebasejs/8.2.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.2.1/firebase-firestore.js"></script>
+  <script src="sam.js"></script>
+</body>
+
+</html>
